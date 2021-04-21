@@ -13,6 +13,7 @@ import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
+
 // import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const useStyles = makeStyles((theme) => ({
@@ -80,16 +81,19 @@ function RecipeBox() {
   }
 
   function editRecipe(recipe) {
-    var t = "";
+    
     setLoading();
     handleEdit();
     ref
+
       .doc(recipe.id)
       .update(recipe)
       .catch((err) => {
         console.error(err);
       });
   }
+
+  
 
   return (
     <Fragment>
@@ -106,7 +110,7 @@ function RecipeBox() {
                 <FormControl
                   type="text"
                   placeholder= "Enter recipe title"
-                  bsSize="lg"
+                  // bsSize="lg"
                   style={{ marginBottom: "1rem" }}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -116,9 +120,9 @@ function RecipeBox() {
               <FormGroup>
                 <FormLabel>Ingredients</FormLabel>
                 <FormControl
-                  componentClass="text"
+                  // componentClass="text"
                   placeholder="Enter ingredients, separate each with a comma"
-                  bsSize="lg"
+                  // bsSize="lg"
                   value={ingredients}
                   onChange={(e) => setIngredients(e.target.value)}
                 />
@@ -160,7 +164,7 @@ function RecipeBox() {
                 <FormControl
                   type="textarea"
                   placeholder="Enter recipe title"
-                  bsSize="lg"
+                  // bsSize="lg"
                   style={{ marginBottom: "1rem" }}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -170,9 +174,9 @@ function RecipeBox() {
               <FormGroup>
                 <FormLabel>Ingredients</FormLabel>
                 <FormControl
-                  componentClass="text"
+                  // componentClass="text"
                   placeholder="Enter ingredients, separate each with a comma"
-                  bsSize="lg"
+                  // bsSize="lg"
                   value={ingredients}
                   onChange={(e) => setIngredients(e.target.value)}
                 />
@@ -182,14 +186,14 @@ function RecipeBox() {
             <Modal.Footer>
               <Button
                  onClick={() => {
-                  editRecipe({ title, ingredients, id: uuidv4() });
+                  editRecipe({ title, ingredients });
                 }}
               >
                 {" "}
                 Submit
               </Button>
 
-              {loading ? <h1>Loading...</h1> : null}
+              {loading ? <h1> Loading</h1> : null}
 
               <Button variant="secondary" onClick={handleEditClose}>
                 Close
@@ -224,7 +228,9 @@ function RecipeBox() {
               </AccordionDetails>
 
             
+              {/* <Button variant="primary" onClick={() => editRecipe({ title:recipe.title, ingredients, id: recipe.id })}>  */}
               <Button variant="primary" onClick={() => editRecipe(recipe)}> 
+
                 Edit
               </Button> 
 
