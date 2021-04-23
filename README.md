@@ -1,7 +1,7 @@
 # freeCodeCamp’s recipe box 
-google firebase 
+Google Firebase 
 
-react
+React
 
 
 
