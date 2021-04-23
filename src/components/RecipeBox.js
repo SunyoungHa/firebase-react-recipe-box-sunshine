@@ -1,74 +1,67 @@
-import React, { useState, useEffect, Fragment } from "react";
-import firebase from "../firebase";
-import { v4 as uuidv4 } from "uuid";
-import {
-  Modal,
-  FormControl,
-  FormGroup,
-  FormLabel,
-  Button
-} from "react-bootstrap";
-import { makeStyles } from "@material-ui/core/styles";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import Typography from "@material-ui/core/Typography";
-
-// import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import React, {useState, useEffect, Fragment} from 'react'
+import firebase from '../firebase'
+import {v4 as uuidv4} from 'uuid'
+import {Modal, FormControl, FormGroup, FormLabel, Button} from 'react-bootstrap'
+import {makeStyles} from '@material-ui/core/styles'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import Typography from '@material-ui/core/Typography'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%"
+    width: '100%',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular
-  }
-}));
+    fontWeight: theme.typography.fontWeightRegular,
+  },
+}))
 
 function RecipeBox() {
-  const classes = useStyles();
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState("");
-  const [ingredients, setIngredients] = useState("");
+  const classes = useStyles()
+  const [recipes, setRecipes] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [title, setTitle] = useState('')
+  const [ingredients, setIngredients] = useState('')
 
-  const ref = firebase.firestore().collection("Recipes");
+  const ref = firebase.firestore().collection('Recipes')
 
-  const [show, setShow] = useState(false);
-  const handleShow = () => setShow(true);
-  const handleClose = () => setShow(false);
+  const [show, setShow] = useState(false)
+  const handleShow = () => setShow(true)
+  const handleClose = () => setShow(false)
 
-  const [edit, setEdit] = useState(false);
-  const handleEdit = () => setEdit(true);
-  const handleEditClose = () => setEdit(false);
+  const [edit, setEdit] = useState(false)
+  const handleEdit = () => setEdit(true)
+  const handleEditClose = () => setEdit(false)
 
+  //Add a useState for editedRecipe, this can be initially set to an empty object {id: ""}
+  const [editedRecipe, setEditedRecipe] = useState({id: ''})
 
   function getRecipes() {
-    setLoading(true);
+    setLoading(true)
     ref.onSnapshot((querySnapshot) => {
-      const items = [];
+      const items = []
       querySnapshot.forEach((doc) => {
-        items.push(doc.data());
-      });
-      setRecipes(items);
-      setLoading(false);
-    });
+        items.push(doc.data())
+      })
+      setRecipes(items)
+      setLoading(false)
+    })
   }
 
   useEffect(() => {
-    getRecipes();
+    getRecipes()
     // eslint-disable-next-line
-  }, []);
+  }, [])
 
- 
   function addRecipe(newRecipe) {
     ref
       .doc(newRecipe.id)
       .set(newRecipe)
       .catch((err) => {
-        console.error(err);
-      });
+        console.error(err)
+      })
   }
 
   function deleteRecipe(recipe) {
@@ -76,24 +69,36 @@ function RecipeBox() {
       .doc(recipe.id)
       .delete()
       .catch((err) => {
-        console.error(err);
-      });
+        console.error(err)
+      })
   }
 
-  function editRecipe(recipe) {
-    
-    setLoading();
-    handleEdit();
+  //function handleTitleChange(e) {
+  //  setEditedTitle(e.target.value)
+  //  console.log(editedTitle)
+  //}
+
+  function handleEditModal(editedObject) {
+    console.log(editedObject)
+    setLoading()
+    // SetState of the recipe object that the user wants to edit
+    // TODO
+    setEditedRecipe(editedObject)
+    //Open the edit modal
+    handleEdit()
+  }
+
+  function editRecipe(updatedRecipe) {
+    // e.preventDefault()
+    setLoading()
     ref
+      .doc(updatedRecipe.id)
+      .update(updatedRecipe)
 
-      .doc(recipe.id)
-      .update(recipe)
       .catch((err) => {
-        console.error(err);
-      });
+        console.error(err)
+      })
   }
-
-  
 
   return (
     <Fragment>
@@ -109,9 +114,9 @@ function RecipeBox() {
                 <FormLabel>Recipe Title</FormLabel>
                 <FormControl
                   type="text"
-                  placeholder= "Enter recipe title"
+                  placeholder="Enter recipe title"
                   // bsSize="lg"
-                  style={{ marginBottom: "1rem" }}
+                  style={{marginBottom: '1rem'}}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
@@ -132,10 +137,10 @@ function RecipeBox() {
             <Modal.Footer>
               <Button
                 onClick={() => {
-                  addRecipe({ title, ingredients, id: uuidv4() });
+                  addRecipe({title, ingredients, id: uuidv4()})
                 }}
               >
-                {" "}
+                {' '}
                 Submit
               </Button>
 
@@ -148,8 +153,6 @@ function RecipeBox() {
           </Modal>
         </form>
       </div>
-
-      {/* // implementing Edit  */}
 
       <div className="modal">
         <form className="form">
@@ -165,9 +168,10 @@ function RecipeBox() {
                   type="textarea"
                   placeholder="Enter recipe title"
                   // bsSize="lg"
-                  style={{ marginBottom: "1rem" }}
+                  style={{marginBottom: '1rem'}}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  //onChange={handleTitleChange}
                 />
               </FormGroup>
 
@@ -176,6 +180,7 @@ function RecipeBox() {
                 <FormControl
                   // componentClass="text"
                   placeholder="Enter ingredients, separate each with a comma"
+                  //placeholder={editRecipe.ingredients}
                   // bsSize="lg"
                   value={ingredients}
                   onChange={(e) => setIngredients(e.target.value)}
@@ -185,11 +190,11 @@ function RecipeBox() {
 
             <Modal.Footer>
               <Button
-                 onClick={() => {
-                  editRecipe({ title, ingredients });
+                onClick={() => {
+                  editRecipe({title, ingredients, id: editedRecipe.id})
                 }}
               >
-                {" "}
+                {' '}
                 Submit
               </Button>
 
@@ -216,7 +221,7 @@ function RecipeBox() {
                 id="panel1a-header"
               >
                 <Typography className={classes.heading}>
-                  {" "}
+                  {' '}
                   {recipe.title}
                 </Typography>
               </AccordionSummary>
@@ -227,25 +232,22 @@ function RecipeBox() {
                 </Typography>
               </AccordionDetails>
 
-            
-              {/* <Button variant="primary" onClick={() => editRecipe({ title:recipe.title, ingredients, id: recipe.id })}>  */}
-              <Button variant="primary" onClick={() => editRecipe(recipe)}> 
-
+              <Button variant="primary" onClick={() => handleEditModal(recipe)}>
                 Edit
-              </Button> 
+              </Button>
 
               <Button variant="danger" onClick={() => deleteRecipe(recipe)}>
                 Delete
               </Button>
             </Accordion>
-          );
+          )
         })}
       </div>
 
       <br />
       <Button onClick={handleShow}>Add</Button>
     </Fragment>
-  );
+  )
 }
 
-export default RecipeBox;
+export default RecipeBox
