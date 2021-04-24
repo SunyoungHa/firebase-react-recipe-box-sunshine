@@ -100,10 +100,21 @@ function RecipeBox() {
       })
   }
 
+  // 요기 how to clear an input fields without refreshing browser?
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+      recipes.title.value = "";
+      recipes.ingredients.value = "";
+ 
+    // e.target.reset();
+   }
+
   return (
     <Fragment>
       <div className="modal">
-        <form className="form">
+        {/* 요기 */}
+        <form className="form" onSubmit={handleSubmit}>
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Add recipe</Modal.Title>
@@ -135,7 +146,8 @@ function RecipeBox() {
             </Modal.Body>
 
             <Modal.Footer>
-              <Button
+              {/* 요기 */}
+              <Button type="reset"
                 onClick={() => {
                   addRecipe({title, ingredients, id: uuidv4()})
                 }}
@@ -155,7 +167,8 @@ function RecipeBox() {
       </div>
 
       <div className="modal">
-        <form className="form">
+        {/* ㅇㅛ기 */}
+        <form className="form" onSubmit={handleSubmit}>
           <Modal show={edit} onHide={handleEditClose}>
             <Modal.Header closeButton>
               <Modal.Title>Edit recipe</Modal.Title>
@@ -189,7 +202,8 @@ function RecipeBox() {
             </Modal.Body>
 
             <Modal.Footer>
-              <Button
+              {/* 요기 */}
+              <Button type="reset"
                 onClick={() => {
                   editRecipe({title, ingredients, id: editedRecipe.id})
                 }}
