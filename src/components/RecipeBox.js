@@ -1,67 +1,73 @@
-import React, {useState, useEffect, Fragment} from 'react'
-import firebase from '../firebase'
-import {v4 as uuidv4} from 'uuid'
-import {Modal, FormControl, FormGroup, FormLabel, Button} from 'react-bootstrap'
-import {makeStyles} from '@material-ui/core/styles'
-import Accordion from '@material-ui/core/Accordion'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
-import Typography from '@material-ui/core/Typography'
+import React, { useState, useEffect, Fragment } from "react";
+import firebase from "../firebase";
+import { v4 as uuidv4 } from "uuid";
+import {
+  Modal,
+  FormControl,
+  FormGroup,
+  FormLabel,
+  Button
+} from "react-bootstrap";
+import { makeStyles } from "@material-ui/core/styles";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import Typography from "@material-ui/core/Typography";
 
+// Accordion style
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%',
+    width: "100%"
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
-}))
+    fontWeight: theme.typography.fontWeightRegular
+  }
+}));
 
 function RecipeBox() {
-  const classes = useStyles()
-  const [recipes, setRecipes] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [title, setTitle] = useState('')
-  const [ingredients, setIngredients] = useState('')
-
-  const ref = firebase.firestore().collection('Recipes')
-
-  const [show, setShow] = useState(false)
-  const handleShow = () => setShow(true)
-  const handleClose = () => setShow(false)
-
-  const [edit, setEdit] = useState(false)
-  const handleEdit = () => setEdit(true)
-  const handleEditClose = () => setEdit(false)
+  const classes = useStyles();
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+  const [edit, setEdit] = useState(false);
+  const handleEdit = () => setEdit(true);
+  const handleEditClose = () => setEdit(false);
+  const ref = firebase.firestore().collection("Recipes");
 
   //Add a useState for editedRecipe, this can be initially set to an empty object {id: ""}
-  const [editedRecipe, setEditedRecipe] = useState({id: ''})
+  const [editedRecipe, setEditedRecipe] = useState({ id: "" });
 
   function getRecipes() {
-    setLoading(true)
+    setLoading(true);
     ref.onSnapshot((querySnapshot) => {
-      const items = []
+      const items = [];
       querySnapshot.forEach((doc) => {
-        items.push(doc.data())
-      })
-      setRecipes(items)
-      setLoading(false)
-    })
+        items.push(doc.data());
+      });
+      setRecipes(items);
+      setLoading(false);
+    });
   }
 
   useEffect(() => {
-    getRecipes()
+    getRecipes();
     // eslint-disable-next-line
-  }, [])
+  }, []);
 
   function addRecipe(newRecipe) {
     ref
       .doc(newRecipe.id)
       .set(newRecipe)
       .catch((err) => {
-        console.error(err)
-      })
+        console.error(err);
+      });
+    setTitle("");
+    setIngredients("");
   }
 
   function deleteRecipe(recipe) {
@@ -69,51 +75,41 @@ function RecipeBox() {
       .doc(recipe.id)
       .delete()
       .catch((err) => {
-        console.error(err)
-      })
+        console.error(err);
+      });
   }
 
-  //function handleTitleChange(e) {
-  //  setEditedTitle(e.target.value)
-  //  console.log(editedTitle)
-  //}
-
   function handleEditModal(editedObject) {
-    console.log(editedObject)
-    setLoading()
+    console.log(editedObject);
+    setLoading();
     // SetState of the recipe object that the user wants to edit
     // TODO
-    setEditedRecipe(editedObject)
+    setEditedRecipe(editedObject);
     //Open the edit modal
-    handleEdit()
+    handleEdit();
   }
 
   function editRecipe(updatedRecipe) {
-    // e.preventDefault()
-    setLoading()
+    setLoading();
     ref
       .doc(updatedRecipe.id)
       .update(updatedRecipe)
-
       .catch((err) => {
-        console.error(err)
-      })
+        console.error(err);
+      });
+    setTitle("");
+    setIngredients("");
   }
 
-  // 요기 how to clear an input fields without refreshing browser?
-
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
-      recipes.title.value = "";
-      recipes.ingredients.value = "";
- 
-    // e.target.reset();
-   }
+    recipes.title.value = "";
+    recipes.ingredients.value = "";
+  }
 
   return (
     <Fragment>
       <div className="modal">
-        {/* 요기 */}
         <form className="form" onSubmit={handleSubmit}>
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -127,7 +123,7 @@ function RecipeBox() {
                   type="text"
                   placeholder="Enter recipe title"
                   // bsSize="lg"
-                  style={{marginBottom: '1rem'}}
+                  style={{ marginBottom: "1rem" }}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
@@ -146,13 +142,12 @@ function RecipeBox() {
             </Modal.Body>
 
             <Modal.Footer>
-              {/* 요기 */}
-              <Button type="reset"
+              <Button
                 onClick={() => {
-                  addRecipe({title, ingredients, id: uuidv4()})
+                  addRecipe({ title, ingredients, id: uuidv4() });
                 }}
               >
-                {' '}
+                {" "}
                 Submit
               </Button>
 
@@ -167,8 +162,7 @@ function RecipeBox() {
       </div>
 
       <div className="modal">
-        {/* ㅇㅛ기 */}
-        <form className="form" onSubmit={handleSubmit}>
+        <form className="form">
           <Modal show={edit} onHide={handleEditClose}>
             <Modal.Header closeButton>
               <Modal.Title>Edit recipe</Modal.Title>
@@ -181,7 +175,7 @@ function RecipeBox() {
                   type="textarea"
                   placeholder="Enter recipe title"
                   // bsSize="lg"
-                  style={{marginBottom: '1rem'}}
+                  style={{ marginBottom: "1rem" }}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   //onChange={handleTitleChange}
@@ -193,8 +187,6 @@ function RecipeBox() {
                 <FormControl
                   // componentClass="text"
                   placeholder="Enter ingredients, separate each with a comma"
-                  //placeholder={editRecipe.ingredients}
-                  // bsSize="lg"
                   value={ingredients}
                   onChange={(e) => setIngredients(e.target.value)}
                 />
@@ -202,13 +194,12 @@ function RecipeBox() {
             </Modal.Body>
 
             <Modal.Footer>
-              {/* 요기 */}
-              <Button type="reset"
+              <Button
                 onClick={() => {
-                  editRecipe({title, ingredients, id: editedRecipe.id})
+                  editRecipe({ title, ingredients, id: editedRecipe.id });
                 }}
               >
-                {' '}
+                {" "}
                 Submit
               </Button>
 
@@ -223,7 +214,7 @@ function RecipeBox() {
       </div>
 
       <hr />
-      {loading ? <h1>Loading...</h1> : null}
+      {loading ? <h1>☀️☀️☀️L☀️o☀️a☀️d☀️i☀️n☀️g☀️☀️☀️</h1> : null}
 
       <div className="accordion">
         {recipes.map((recipe) => {
@@ -235,7 +226,7 @@ function RecipeBox() {
                 id="panel1a-header"
               >
                 <Typography className={classes.heading}>
-                  {' '}
+                  {" "}
                   {recipe.title}
                 </Typography>
               </AccordionSummary>
@@ -254,14 +245,15 @@ function RecipeBox() {
                 Delete
               </Button>
             </Accordion>
-          )
+          );
         })}
       </div>
 
       <br />
       <Button onClick={handleShow}>Add</Button>
     </Fragment>
-  )
+  );
 }
 
-export default RecipeBox
+export default RecipeBox;
+
