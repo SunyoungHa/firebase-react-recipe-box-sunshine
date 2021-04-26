@@ -56,7 +56,6 @@ function RecipeBox() {
 
   useEffect(() => {
     getRecipes();
-    // eslint-disable-next-line
   }, []);
 
   function addRecipe(newRecipe) {
@@ -82,10 +81,7 @@ function RecipeBox() {
   function handleEditModal(editedObject) {
     console.log(editedObject);
     setLoading();
-    // SetState of the recipe object that the user wants to edit
-    // TODO
     setEditedRecipe(editedObject);
-    //Open the edit modal
     handleEdit();
   }
 
@@ -101,16 +97,10 @@ function RecipeBox() {
     setIngredients("");
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    recipes.title.value = "";
-    recipes.ingredients.value = "";
-  }
-
   return (
     <Fragment>
       <div className="modal">
-        <form className="form" onSubmit={handleSubmit}>
+        <form className="form">
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Add recipe</Modal.Title>
@@ -132,7 +122,6 @@ function RecipeBox() {
               <FormGroup>
                 <FormLabel>Ingredients</FormLabel>
                 <FormControl
-                  // componentClass="text"
                   placeholder="Enter ingredients, separate each with a comma"
                   // bsSize="lg"
                   value={ingredients}
@@ -174,11 +163,9 @@ function RecipeBox() {
                 <FormControl
                   type="textarea"
                   placeholder="Enter recipe title"
-                  // bsSize="lg"
                   style={{ marginBottom: "1rem" }}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  //onChange={handleTitleChange}
                 />
               </FormGroup>
 
@@ -256,4 +243,3 @@ function RecipeBox() {
 }
 
 export default RecipeBox;
-
